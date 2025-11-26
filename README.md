@@ -1,39 +1,100 @@
-# Movie API Starter (Express + Sequelize + SQLite)
+# Movie API - REST API
 
-## Fitur
-- CRUD Movies
-- CRUD Reviews
-- Relasi Movie -> Reviews (One to Many)
-- Menggunakan SQLite
+API RESTful sederhana untuk mengelola data film dan ulasan menggunakan Express.js, Sequelize ORM, dan SQLite.
 
-## Cara Menjalankan
-1. `npm install`
-2. `npm run seed`
-3. `npm start`
+## 📋 Fitur
 
-Server berjalan di `http://localhost:3000`
+- ✅ CRUD Movies (Create, Read, Update, Delete)
+- ✅ CRUD Reviews (Create, Read, Update, Delete)
+- ✅ Relasi One-to-Many antara Movie dan Reviews
+- ✅ Database SQLite (ringan dan mudah di-setup)
+- ✅ Struktur folder yang terorganisir dengan MVC pattern
 
-## Endpoints
+## 🛠️ Teknologi yang Digunakan
+
+- **Node.js** - Runtime JavaScript
+- **Express.js** - Web framework
+- **Sequelize** - ORM untuk database
+- **SQLite** - Database
+
+## 📁 Struktur Folder
+
+```
+PRAKTIKUM/
+├── node_modules/
+├── src/
+│   ├── config/
+│   │   └── database.js          # Konfigurasi database
+│   ├── controllers/
+│   │   ├── movie.controller.js  # Logic untuk movies
+│   │   └── review.controller.js # Logic untuk reviews
+│   ├── models/
+│   │   ├── index.js             # Setup Sequelize & relasi
+│   │   ├── movie.js             # Model Movie
+│   │   └── review.js            # Model Review
+│   ├── routes/
+│   │   ├── movie.routes.js      # Routes untuk movies
+│   │   └── review.routes.js     # Routes untuk reviews
+│   └── seed/
+│       └── seed.js              # Data awal untuk testing
+├── .gitignore
+├── app.js                        # Setup Express app
+├── server.js                     # Entry point aplikasi
+├── database.sqlite               # Database file (generated)
+├── package.json
+├── package-lock.json
+└── README.md
+```
+
+## 🚀 Cara Menjalankan
+
+### 1. Install Dependencies
+```bash
+npm install
+```
+
+### 2. Seed Database (Opsional)
+Mengisi database dengan data contoh:
+```bash
+npm run seed
+```
+
+### 3. Jalankan Server
+```bash
+npm start
+```
+
+Server akan berjalan di: **`http://localhost:3000`**
+
+## 📡 API Endpoints
 
 ### Movies
-- `GET /movies` - Get all movies
-- `GET /movies/:id` - Get movie by ID
-- `POST /movies` - Create new movie
-- `PUT /movies/:id` - Update movie
-- `DELETE /movies/:id` - Delete movie
+
+| Method | Endpoint | Deskripsi |
+|--------|----------|-----------|
+| `GET` | `/movies` | Mendapatkan semua film |
+| `GET` | `/movies/:id` | Mendapatkan film berdasarkan ID |
+| `POST` | `/movies` | Membuat film baru |
+| `PUT` | `/movies/:id` | Update film berdasarkan ID |
+| `DELETE` | `/movies/:id` | Hapus film berdasarkan ID |
 
 ### Reviews
-- `GET /reviews` - Get all reviews
-- `GET /reviews/:id` - Get review by ID
-- `POST /reviews` - Create new review
-- `PUT /reviews/:id` - Update review
-- `DELETE /reviews/:id` - Delete review
 
-## Contoh Request
+| Method | Endpoint | Deskripsi |
+|--------|----------|-----------|
+| `GET` | `/reviews` | Mendapatkan semua ulasan |
+| `GET` | `/reviews/:id` | Mendapatkan ulasan berdasarkan ID |
+| `POST` | `/reviews` | Membuat ulasan baru |
+| `PUT` | `/reviews/:id` | Update ulasan berdasarkan ID |
+| `DELETE` | `/reviews/:id` | Hapus ulasan berdasarkan ID |
+
+## 📝 Contoh Request
 
 ### Create Movie
-```json
+```http
 POST /movies
+Content-Type: application/json
+
 {
   "title": "The Matrix",
   "genre": "Sci-Fi",
@@ -42,9 +103,43 @@ POST /movies
 }
 ```
 
-### Create Review
+**Response:**
 ```json
+{
+  "id": 1,
+  "title": "The Matrix",
+  "genre": "Sci-Fi",
+  "year": 1999,
+  "description": "A computer hacker learns about the true nature of reality",
+  "createdAt": "2025-11-26T10:00:00.000Z",
+  "updatedAt": "2025-11-26T10:00:00.000Z"
+}
+```
+
+### Get All Movies
+```http
+GET /movies
+```
+
+**Response:**
+```json
+[
+  {
+    "id": 1,
+    "title": "The Matrix",
+    "genre": "Sci-Fi",
+    "year": 1999,
+    "description": "A computer hacker learns about the true nature of reality",
+    "Reviews": []
+  }
+]
+```
+
+### Create Review
+```http
 POST /reviews
+Content-Type: application/json
+
 {
   "movie_id": 1,
   "reviewer": "John Doe",
@@ -52,29 +147,66 @@ POST /reviews
   "score": 10
 }
 ```
+
+**Response:**
+```json
+{
+  "id": 1,
+  "movie_id": 1,
+  "reviewer": "John Doe",
+  "comment": "Amazing movie!",
+  "score": 10,
+  "createdAt": "2025-11-26T10:05:00.000Z",
+  "updatedAt": "2025-11-26T10:05:00.000Z"
+}
 ```
+
+### Update Movie
+```http
+PUT /movies/1
+Content-Type: application/json
+
+{
+  "title": "The Matrix Reloaded",
+  "year": 2003
+}
+```
+
+### Delete Movie
+```http
+DELETE /movies/1
+```
+
+## 🧪 Testing dengan Postman
+
+1. Import koleksi Postman (jika tersedia): `Movie API - REST API.postman_collection.json`
+2. Atau buat request manual sesuai endpoint di atas
+3. Pastikan server sudah running
+
+## 📦 Scripts
+
+```json
+{
+  "start": "node server.js",
+  "seed": "node src/seed/seed.js",
+  "dev": "nodemon server.js"
+}
+```
+
+## 🔗 Relasi Database
+
+- **Movie** `1 ——< N` **Review**
+  - Satu film dapat memiliki banyak ulasan
+  - Setiap ulasan terhubung ke satu film melalui `movie_id`
+
+## 📄 License
+
+MIT
+
+## 👨‍💻 Author
+
+Buletan - 1 | Praktikum REST API
 
 ---
 
-Struktur folder:
-```
-project/
-├── app.js
-├── server.js
-├── package.json
-├── README.md
-└── src/
-    ├── config/
-    │   └── database.js
-    ├── models/
-    |   |   index.js 
-    |   |   movie.js
-    │   └── review.js
-    ├── controllers/
-    │   ├── movie.controller.js
-    │   └── review.controller.js
-    ├── routes/
-    │   ├── movie.routes.js
-    │   └── review.routes.js
-    └── seed/
-        └── seed.js
+**Happy Coding! 🚀**
